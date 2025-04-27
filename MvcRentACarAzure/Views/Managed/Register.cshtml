@@ -1,0 +1,134 @@
+﻿@model Usuario
+@{
+    ViewData["Title"] = "Registro";
+    List<Rol> roles = ViewData["roles"] as List<Rol>;
+}
+
+@await Html.PartialAsync("_ErrorModal")
+
+<div class="container">
+    <div class="card my-4">
+        <div class="card-header">
+            <h1>Registro de Usuario</h1>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6 input-group">
+                        <label for="nombre" class="form-label input-group-text">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 input-group">
+                        <label for="email" class="form-label input-group-text">Email:</label>
+                        <input type="email" id="email" name="email" class="form-control" required />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 input-group">
+                        <label for="password" class="form-label input-group-text">Contraseña:</label>
+                        <input type="password" id="password" name="password" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 input-group">
+                        <label for="telefono" class="form-label input-group-text">Teléfono:</label>
+                        <input type="text" id="telefono" name="telefono" class="form-control" required
+                               pattern="^[6789]\d{8}$"
+                               title="Teléfono español válido: 9 dígitos iniciando con 6, 7, 8 o 9" />
+                    </div>
+                </div>
+                <div id="additionalFields">
+                    <div class="row mb-3">
+                        <div class="col-md-6 input-group">
+                            <label for="nombreempresa" class="form-label input-group-text">Nombre Empresa:</label>
+                            <input type="text" id="nombreempresa" name="nombreempresa" class="form-control" />
+                        </div>
+                        <div class="col-md-6 input-group">
+                            <label for="direccion" class="form-label input-group-text">Dirección:</label>
+                            <input type="text" id="direccion" name="direccion" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 input-group">
+                        <label for="idrol" class="form-label input-group-text">Rol:</label>
+                        <select id="idrol" name="idrol" class="form-select" required>
+                            @foreach (Rol rol in roles)
+                            {
+                                <option value="@rol.Id">@rol.Tipo</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <button type="submit" class="btn btn-primary ">Registrarse</button>
+                </div>
+            </form>
+            <h3>@ViewData["mensaje"]</h3>
+        </div>
+    </div>
+    <a asp-action="Login" asp-controller="Managed">
+        <i class="fa-solid fa-left-long"></i> Atrás
+    </a>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#errorModal').modal('show');
+        });
+
+        document.getElementById('idrol').addEventListener('change', function () {
+            var selectedRole = this.value;
+            var additionalFields = document.getElementById('additionalFields');
+            var passpecialField = document.getElementById('passpecialField');
+            additionalFields.innerHTML = '';
+
+            if (selectedRole == '2') { // Comprador
+                additionalFields.innerHTML = `
+                    <div class="row mb-3">
+                        <div class="col-md-6 input-group">
+                            <label for="apellidos" class="form-label input-group-text">Apellidos:</label>
+                            <input type="text" id="apellidos" name="apellidos" class="form-control" />
+                        </div>
+                        <div class="col-md-6 input-group">
+                            <label for="dni" class="form-label input-group-text">DNI:</label>
+                            <input type="text" id="dni" name="dni" class="form-control"
+                                   pattern="^[0-9]{8}[A-Za-z]$"
+                                   title="DNI español: 8 dígitos y una letra" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 input-group">
+                            <label for="fechanacimiento" class="form-label input-group-text">Fecha de Nacimiento:</label>
+                            <input type="date" id="fechanacimiento" name="fechanacimiento" class="form-control" />
+                        </div>
+                    </div>
+                `;
+                if(passpecialField){
+                    passpecialField.style.display = 'none';
+                }
+            } else { // Vendedor
+                additionalFields.innerHTML = `
+                    <div class="row mb-3">
+                        <div class="col-md-6 input-group">
+                            <label for="nombreempresa" class="form-label input-group-text">Nombre Empresa:</label>
+                            <input type="text" id="nombreempresa" name="nombreempresa" class="form-control" />
+                        </div>
+                        <div class="col-md-6 input-group">
+                            <label for="direccion" class="form-label input-group-text">Dirección:</label>
+                            <input type="text" id="direccion" name="direccion" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 input-group" id="passpecialField">
+                            <label for="passpecial" class="form-label input-group-text">Código Administrador:</label>
+                            <input type="text" id="passpecial" name="passpecial" class="form-control" />
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // Trigger change event to set default fields
+        document.getElementById('idrol').dispatchEvent(new Event('change'));
+    </script>
+}

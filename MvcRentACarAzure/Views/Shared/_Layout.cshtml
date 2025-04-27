@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>ROYAL CARS - Car Rental HTML Template</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="Free HTML Templates" name="keywords">
+	<meta content="Free HTML Templates" name="description">
+
+	<!-- Libraries Stylesheet -->
+	<link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+	<link href="~/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Template Stylesheet -->
+	<link href="~/css/style.css" rel="stylesheet">
+
+	<link href="~/css/site.css" rel="stylesheet">
+</head>
+
+<body>
+	@await Html.PartialAsync("_LogoutModal")
+	
+	@if (!User.Identity.IsAuthenticated || User.IsInRole("2"))
+	{
+		<!-- Topbar Start -->
+		<div class="container-fluid bg-dark py-3 px-lg-5 d-none d-lg-block">
+			<div class="row">
+				<div class="col-md-6 text-center text-lg-left mb-2 mb-lg-0">
+					<div class="d-inline-flex align-items-center">
+						<a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>@ViewData["telefono"]</a>
+						<span class="text-body">|</span>
+						<a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>@ViewData["email"]</a>
+						<span class="text-body">|</span>
+						<a class="text-body px-3" href=""><i class="fa-solid fa-map-location mr-2"></i>@ViewData["direccion"]</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Topbar End -->
+		<!-- Navbar Start -->
+		<div class="container-fluid position-relative nav-bar p-0">
+			<div class="position-relative px-lg-5" style="z-index: 9;">
+				<nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+					<a href="" class="navbar-brand">
+						<h1 class="text-uppercase text-primary mb-1">@ViewData["nombreempresa"]</h1>
+					</a>
+					<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+						<div class="navbar-nav ml-auto py-0">
+							<a class="nav-item nav-link" asp-action="Index" asp-controller="Home">Home</a>
+							<a class="nav-item nav-link" asp-action="Coches" asp-controller="Compradores">Coches</a>
+							@if (!User.Identity.IsAuthenticated)
+							{
+								<a asp-action="Login" asp-controller="Managed" class="nav-item nav-link">Iniciar Sesión</a>
+							}
+							else
+							{
+								<a asp-action="Compras" asp-controller="Compradores" class="nav-item nav-link">Mis compras</a>
+								<a asp-action="LogOut" asp-controller="Managed" class="nav-item nav-link" id="logoutLink">Cerrar Sesión</a>
+							}
+
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+		<!-- Navbar End -->
+		@RenderBody()
+		//@RenderSection("Scripts", required: false)
+	}
+	else if (User.IsInRole("1"))
+	{
+		<!-- Topbar Start -->
+		<div class="container-fluid bg-dark py-3 px-lg-5 d-none d-lg-block">
+		</div>
+		<!-- Topbar End -->
+		<!-- Navbar Start -->
+		<div class="container-fluid position-relative nav-bar p-0">
+			<div class="position-relative px-lg-5" style="z-index: 9;">
+				<nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+					<a href="" class="navbar-brand">
+						<h1 class="text-uppercase text-primary mb-1">Bienvenido @ViewData["nombre"]</h1>
+					</a>
+					<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+						<div class="navbar-nav ml-auto py-0">
+							<a class="nav-item nav-link" asp-action="Index" asp-controller="Home">Home</a>
+							<a class="nav-item nav-link" asp-action="ComprobarKilometraje" asp-controller="Vendedores">Comprobar km's</a>
+							<a class="nav-item nav-link" asp-action="Coches" asp-controller="Vendedores">Mis Coches</a>
+							<a class="nav-item nav-link" asp-action="InsertCoche" asp-controller="Coches">Importar Nuevo Coche</a>
+							<a asp-action="LogOut" asp-controller="Managed" class="nav-item nav-link" id="logoutLink">Cerrar Sesión</a>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+		<!-- Navbar End -->
+		@RenderBody()
+
+	}
+
+
+
+
+
+
+
+	<!-- JavaScript Libraries -->
+	<script src="~/js/jquery-3.4.1.min.js"></script>
+	<script src="~/js/bootstrap.bundle.min.js"></script>
+	<script src="~/lib/easing/easing.min.js"></script>
+	<script src="~/lib/waypoints/waypoints.min.js"></script>
+	<script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+	<script src="~/lib/tempusdominus/js/moment.min.js"></script>
+	<script src="~/lib/tempusdominus/js/moment-timezone.min.js"></script>
+	<script src="~/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+	<!-- Template Javascript -->
+	<script src="~/js/main.js"></script>
+	@RenderSection("Scripts", required: false)
+	<script>
+		$(document).ready(function () {
+			$("#logoutLink").on("click", function (e) {
+				e.preventDefault();
+				var logoutUrl = $(this).attr("href");
+				// Mostrar el modal de warning
+				$("#logoutModal").modal("show");
+				// Si el usuario confirma, redirigir a la URL de logout
+				$("#confirmLogoutButton").off("click").on("click", function () {
+					window.location.href = logoutUrl;
+				});
+			});
+		});
+	</script>
+
+</body>
+
+</html>

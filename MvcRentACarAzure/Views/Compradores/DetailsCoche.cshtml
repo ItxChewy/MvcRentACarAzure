@@ -1,0 +1,218 @@
+﻿@model VistaCoche
+
+@* Incluir la vista parcial del modal *@
+@await Html.PartialAsync("_ErrorModal")
+@await Html.PartialAsync("_SuccessModal")
+
+<div class="container-fluid pt-5">
+    <div class="container pt-5 pb-3">
+        <a asp-action="Coches" asp-controller="Compradores">
+            <i class="fa-solid fa-circle-arrow-left"></i>
+        </a>
+        <h1 class="display-4 text-uppercase mb-5">@Model.Marca @Model.Modelo</h1>
+        <div class="row align-items-center pb-2">
+            <div class="col-lg-6 mb-4">
+                <img class="img-fluid" src="@Model.Imagen">
+            </div>
+            <div class="col-lg-6 mb-4">
+                <h4 class="mb-2">@Model.PrecioKilometros /Dia O @Model.PrecioIlimitado /Dia </h4>
+                <p>En RENTACAR ofrecemos dos tipos de tarifas para el alquiler de vehículos. La <strong>Tarifa Estándar</strong> incluye un límite de 1,200 km; en caso de superar esta distancia, se aplicará un cargo adicional por cada kilómetro extra recorrido, cuyo cálculo se realizará al momento de la devolución del vehículo. Por otro lado, la <strong>Tarifa Ilimitada </strong>permite al cliente recorrer cualquier distancia sin restricciones, a cambio de un costo fijo superior. Al finalizar el período de alquiler, el kilometraje será verificado para determinar si corresponde algún cargo adicional en la Tarifa Estándar.</p>
+            </div>
+        </div>
+        <div class="row mt-n3 mt-lg-0 pb-4">
+            <div class="col-md-3 col-6 mb-2">
+                <i class="fa fa-chair text-primary mr-2"></i>
+                <span>Asientos: @Model.Asientos</span>
+            </div>
+            <div class="col-md-3 col-6 mb-2">
+                <i class="fa fa-cogs text-primary mr-2"></i>
+                <span>Marcha: @Model.Marcha</span>
+            </div>
+            <div class="col-md-3 col-6 mb-2">
+                <i class="fa fa-road text-primary mr-2"></i>
+                <span>Kilometros: @Model.Kilometraje</span>
+            </div>
+            <div class="col-md-3 col-6 mb-2">
+                <i class="fa fa-door-closed text-primary mr-2"></i>
+                <span>Puertas: @Model.Puertas</span>
+            </div>
+            <div class="col-md-3 col-6 mb-2">
+                <i class="fa fa-gas-pump text-primary mr-2"></i>
+                <span>Combustible : @Model.Combustible</span>
+            </div>
+            <div class="col-md-3 col-6 mb-2">
+                <i class="fa fa-dollar-sign text-primary mr-2"></i>
+                <span>Gama: @Model.Gama</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid pt-5 mb-3">
+    <div class="container">
+        <div id="reservationCalendar"></div>
+    </div>
+</div>
+<!-- Detail End -->
+<!-- Car Booking Start -->
+<form method="post">
+    <div class="container-fluid pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="mb-3">
+                        <input name="idcoche" value="@Model.IdCoche" hidden />
+                        <input name="valor" id="valorInput" hidden />
+                        <input name="kilometraje" id="kilometrajeInput" hidden />
+                        <div class="row">
+                            <div class="col-6 form-group">
+                                <div id="date1" data-target-input="nearest">
+                                    <h4>Fecha de recogida</h4>
+                                    <input type="date" class="form-control p-4" placeholder="Selecciona Fecha"
+                                           data-target="#date1" name="fechainicio" id="fechainicio" min="@DateTime.Now.ToString("yyyy-MM-dd")" onchange="checkDates()" />
+                                </div>
+                            </div>
+                            <div class="col-6 form-group">
+                                <div id="date2" data-target-input="nearest">
+                                    <h4>Fecha de entrega</h4>
+                                    <input type="date" class="form-control p-4" placeholder="Selecciona Fecha"
+                                           data-target="#date2" name="fechafin" id="fechafin" onchange="checkDates()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <h4>Kilometraje</h4>
+                        <div class="preciokilometros-option mb-3 form-group border border-secondary rounded p-3" onclick="selectOption(this, true)">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" value="@Model.PrecioKilometros" name="preciokilometros" id="km2700" onchange="calculateValue()">
+                                <label class="form-check-label" for="km2700">
+                                    <strong>1200 km</strong><br>
+                                    <small>+2,50 € / por cada km adicional</small>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="preciokilometros-option selected mb-3 border border-primary rounded p-3 bg-light" onclick="selectOption(this, false)">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" value="@Model.PrecioIlimitado" name="preciokilometros" id="kmIlimitado" checked onchange="calculateValue()">
+                                <label class="form-check-label" for="kmIlimitado">
+                                    <strong>Kilometraje ilimitado</strong><br>
+                                    <small>Todos los kilómetros están incluidos en el precio</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="bg-secondary p-5 mb-5">
+                        <h2 class="text-primary mb-4">Reservar</h2>
+                        <button type="submit" class="btn btn-block btn-primary py-3" id="reservarBtn" style="display: none;">Reservar por : <span id="valor">0</span> €</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<style>
+    #reservationCalendar {
+        margin: auto;
+        font-size: 0.8rem; /* Reducir el tamaño de fuente */
+    }
+
+    .fc-daygrid-day {
+        min-height: 30px; /* Ajustar altura de los días */
+    }
+</style>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#errorModal').modal('show');
+        });
+         $(document).ready(function() {
+            $('#successModal').modal('show');
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('reservationCalendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es', // Español
+                firstDay: 1, // La semana comienza el lunes
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth'
+                },
+                buttonText: {
+                    today: 'Hoy',
+                    dayGridMonth: 'Mes',
+                },
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    fetch(`/Compradores/GetReservasPorCocheComprador?idcoche=@Model.IdCoche`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var backgroundEvents = data.map(event => ({
+                                start: event.start, // Fecha de inicio
+                                end: event.end,     // Fecha de fin
+                                display: 'background', // Evento de fondo
+                                backgroundColor: 'rgba(255, 0, 0, 0.5)' // Rojo semi-transparente
+                            }));
+                            successCallback(backgroundEvents);
+                        })
+                        .catch(error => {
+                            console.error("Error cargando eventos:", error);
+                            failureCallback(error);
+                        });
+                },
+                height: 350, // Reducir altura
+                contentHeight: 350,
+                aspectRatio: 1.5
+            });
+
+            calendar.render();
+        });
+
+        function selectOption(element, isLimited) {
+            document.querySelectorAll('.preciokilometros-option').forEach(el => {
+                el.classList.remove('selected', 'border-primary', 'bg-light');
+                el.classList.add('border-secondary');
+            });
+            element.classList.remove('border-secondary');
+            element.classList.add('selected', 'border-primary', 'bg-light');
+            element.querySelector('input').checked = true;
+            document.getElementById('kilometrajeInput').value = isLimited;
+            calculateValue();
+        }
+
+        function checkDates() {
+            const fechainicio = document.getElementById('fechainicio').value;
+            const fechafin = document.getElementById('fechafin').value;
+            const reservarBtn = document.getElementById('reservarBtn');
+
+            if (fechainicio && fechafin) {
+                reservarBtn.style.display = 'block';
+                calculateValue();
+            } else {
+                reservarBtn.style.display = 'none';
+            }
+        }
+
+        function calculateValue() {
+            const fechainicio = document.getElementById('fechainicio').value;
+            const fechafin = document.getElementById('fechafin').value;
+            const preciokilometros = document.querySelector('input[name="preciokilometros"]:checked').value.replace(',', '.');
+            const valorSpan = document.getElementById('valor');
+            const valorInput = document.getElementById('valorInput');
+
+            if (fechainicio && fechafin) {
+                const date1 = new Date(fechainicio);
+                const date2 = new Date(fechafin);
+                const diffTime = Math.abs(date2 - date1);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include the start day
+
+                const valor = diffDays * parseFloat(preciokilometros);
+                valorSpan.textContent = valor.toFixed(2).replace('.', ',');
+                valorInput.value = valor.toFixed(2).replace('.', ',');
+            }
+        }
+    </script>
+}

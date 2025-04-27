@@ -1,0 +1,56 @@
+﻿@model List<Compra>
+
+<div class="container-fluid pt-5">
+    <div class="container pt-5 pb-3">
+        <h1 class="display-4 text-uppercase mb-5">Mis Compras</h1>
+
+        <!-- Filtros -->
+        <div class="form-group">
+            <div class="filter-buttons mb-4">
+                <button type="button" class="btn filter-btn @(ViewData["EstadoReservaSeleccionado"] == null ? "btn-primary" : "btn-secondary")" data-filter="">Todas</button>
+                <button type="button" class="btn filter-btn @(ViewData["EstadoReservaSeleccionado"]?.ToString() == "Activo" ? "btn-primary" : "btn-secondary")" data-filter="Activo">Activas</button>
+                <button type="button" class="btn filter-btn @(ViewData["EstadoReservaSeleccionado"]?.ToString() == "Espera" ? "btn-primary" : "btn-secondary")" data-filter="Espera">En Espera</button>
+                <button type="button" class="btn filter-btn @(ViewData["EstadoReservaSeleccionado"]?.ToString() == "Finalizado" ? "btn-primary" : "btn-secondary")" data-filter="Finalizado">Finalizadas</button>
+            </div>
+        </div>
+
+        <div id="compras-container">
+            @await Html.PartialAsync("_ComprasList", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Agregar evento click a los botones de filtro
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Obtener el valor del filtro
+                    const filter = this.getAttribute('data-filter');
+
+                    // Cambiar clase activa de los botones
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-secondary');
+                    });
+                    this.classList.remove('btn-secondary');
+                    this.classList.add('btn-primary');
+
+                    // Realizar la solicitud AJAX
+                    $.ajax({
+                        url: '@Url.Action("ComprasListPartial", "Compradores")',
+                        type: 'GET',
+                        data: { estadoReserva: filter },
+                        success: function (data) {
+                            $('#compras-container').html(data);
+                        },
+                        error: function (error) {
+                            console.error('Error al cargar las compras filtradas:', error);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

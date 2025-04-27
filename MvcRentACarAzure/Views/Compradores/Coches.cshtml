@@ -1,0 +1,165 @@
+﻿@model List<VistaCoche>
+@{
+	int valor = 1;
+}
+<div class="container-fluid py-5">
+	<div class="container pt-5 pb-3">
+		<h1 class="display-1 text-primary text-center"></h1>
+		<h1 class="display-4 text-uppercase text-center mb-5">Elige tu coche</h1>
+		<div class="row mb-4">
+			<div class="col-md-8">
+				<input type="text" id="searchInput" class="form-control" placeholder="Buscar por marca o modelo" />
+			</div>
+			<div class="col-md-1 ">
+				<button id="sortIcon" class="btn btn-secondary">
+					<i class="fa-solid fa-filter-circle-dollar"></i>
+					<i id="sortOrderIcon" class="fa-solid fa-sort-down"></i>
+				</button>
+			</div>
+			<div class="col-md-3">
+				<button id="filterButton" class="btn btn-primary">
+					<i class="fa-solid fa-filter"></i>
+				</button>
+			</div>
+		</div>
+		<div class="row" id="cochesList">
+			@foreach (VistaCoche coche in Model)
+			{
+				<div class="col-lg-4 col-md-6 mb-2">
+					<div class="rent-item mb-4">
+						<img class="img-fluid mb-4" src="@coche.Imagen" style="width:300px;height:200px" />
+						<h4 class="text-uppercase mb-4">@coche.Marca @coche.Modelo</h4>
+						<div class="d-flex justify-content-center mb-4">
+							<div class="px-2  border-right">
+								<i class="fa fa-chair text-primary mr-1"></i>
+								<span>@coche.Asientos</span>
+							</div>
+							<div class="px-2 border-left border-right">
+								<i class="bi bi-0-circle-fill"></i>
+								<i class="fa fa-cogs text-primary mr-1"></i>
+								<span>@coche.Marcha</span>
+							</div>
+							<div class="px-2">
+								<i class="fa fa-road text-primary mr-1"></i>
+								<span>@coche.Kilometraje km</span>
+							</div>
+						</div>
+						<a class="btn btn-primary px-3" asp-action="DetailsCoche" asp-controller="Compradores" asp-route-id="@coche.IdCoche">Alquilar</a>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="filterModalLabel">Más Filtros</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="marchaSelect">Marcha</label>
+					<select id="marchaSelect" class="form-control">
+						<option value="">Todas las marchas</option>
+						<option value="Manual">Manual</option>
+						<option value="Automática">Automática</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="puertasSelect">Puertas</label>
+					<select id="puertasSelect" class="form-control">
+						<option value="">Todas las puertas</option>
+						<option value="3">3 Puertas</option>
+						<option value="5">5 Puertas</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="combustibleSelect">Combustible</label>
+					<select id="combustibleSelect" class="form-control">
+						<option value="">Todos los combustibles</option>
+						<option value="Gasolina">Gasolina</option>
+						<option value="Diesel">Diesel</option>
+						<option value="Eléctrico">Eléctrico</option>
+					</select>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="applyFilterButton">Aplicar Filtros</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		// Set initial sort to descending
+		applyFilters('precio_asc');
+
+		document.getElementById('sortIcon').addEventListener('click', function () {
+			var currentSort = this.getAttribute('data-sort');
+			var newSort = currentSort === 'precio_desc' ? 'precio_asc' : 'precio_desc';
+			this.setAttribute('data-sort', newSort);
+			toggleSortIcon(newSort);
+			applyFilters(newSort);
+		});
+
+		document.getElementById('filterButton').addEventListener('click', function () {
+			$('#filterModal').modal('show');
+		});
+
+		document.getElementById('applyFilterButton').addEventListener('click', function () {
+			applyFilters();
+			$('#filterModal').modal('hide');
+		});
+
+		document.getElementById('searchInput').addEventListener('input', function () {
+			applyFilters();
+		});
+	});
+
+	function toggleSortIcon(sortOrder) {
+		var sortOrderIcon = document.getElementById('sortOrderIcon');
+		if (sortOrder === 'precio_asc') {
+			sortOrderIcon.classList.remove('fa-sort-up');
+			sortOrderIcon.classList.add('fa-sort-down');
+		} else {
+			sortOrderIcon.classList.remove('fa-sort-down');
+			sortOrderIcon.classList.add('fa-sort-up');
+		}
+	}
+
+	function applyFilters(sortOrder) {
+		var searchInput = document.getElementById('searchInput').value;
+		var marchaSelect = document.getElementById('marchaSelect').value;
+		var puertasSelect = document.getElementById('puertasSelect').value;
+		var combustibleSelect = document.getElementById('combustibleSelect').value;
+		var precioMinInput = document.getElementById('precioMinInput') ? document.getElementById('precioMinInput').value : '';
+		var precioMaxInput = document.getElementById('precioMaxInput') ? document.getElementById('precioMaxInput').value : '';
+
+		$.ajax({
+			url: '@Url.Action("FilterCoches", "Compradores")',
+			type: 'GET',
+			data: {
+				search: searchInput,
+				sort: sortOrder,
+				marcha: marchaSelect,
+				puertas: puertasSelect,
+				combustible: combustibleSelect,
+				precioMin: precioMinInput,
+				precioMax: precioMaxInput
+			},
+			success: function (data) {
+				$('#cochesList').html($(data).find('#cochesList').html());
+			}
+		});
+	}
+</script>
+
+
+

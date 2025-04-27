@@ -1,0 +1,53 @@
+﻿@model List<VistaCoche>
+@await Html.PartialAsync("_SuccessModal")
+@await Html.PartialAsync("_WarningModal")
+<div class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <h1 class="display-1 text-primary text-center"></h1>
+        <h1 class="display-4 text-uppercase text-center mb-5">Gestiona tus Coches</h1>
+        <div class="row">
+            @foreach (VistaCoche coche in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-2">
+                    <div class="rent-item mb-4">
+                        <img class="img-fluid mb-4" src="@coche.Imagen" style="width:300px;height:200px" />
+                        <h4 class="text-uppercase mb-4">@coche.Marca @coche.Modelo</h4>
+                        <a class="btn btn-primary px-3 mb-3" asp-action="ManageCoche" asp-controller="Vendedores" asp-route-idcoche="@coche.IdCoche">Reservas</a>
+                        <a class="btn btn-primary px-3 mb-3" asp-action="UpdateCoche" asp-controller="Coches" asp-route-idcoche="@coche.IdCoche">Modificar Precio</a>
+                        <button class="btn btn-danger px-3" onclick="confirmDelete(@coche.IdCoche)">Dar de baja coche</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Show success modal if it exists when page loads
+            if ($('#successModal').length) {
+                $('#successModal').modal('show');
+            }
+        });
+
+        function confirmDelete(idCoche) {
+            // Show the warning modal
+            $('#warningModal').modal('show');
+
+            // Store the coche ID to be used when confirming deletion
+            $('#confirmButton').data('id', idCoche);
+
+            // Handle the confirmation button click
+            $('#confirmButton').off('click').on('click', function() {
+                var cocheId = $(this).data('id');
+
+                // Navigate to the DeleteCoche action with the coche ID
+                window.location.href = '@Url.Action("DeleteCoche", "Coches")?idcoche=' + cocheId;
+            });
+        }
+    </script>
+}
+
+
+

@@ -1,0 +1,105 @@
+﻿@model List<Reserva>
+
+@await Html.PartialAsync("_SuccessModal")
+@await Html.PartialAsync("_WarningModal")
+@{
+    int filtroActual = (int)(ViewData["Filtro"] ?? 0);
+}
+<div class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <h1 class="display-4 text-uppercase text-center mb-5">Comprobar Kilometraje</h1>
+        @if(Model.Count() == 0)
+        {
+            <h3 class="text-uppercase text-center">No existen reservas</h3>
+        }
+        else
+        {
+        <div class="mb-3">
+            <button type="button" class="btn filter-btn @(filtroActual == 0 ? "btn-primary" : "btn-secondary")" data-filtro="0">Todas</button>
+            <button type="button" class="btn filter-btn @(filtroActual == 1 ? "btn-primary" : "btn-secondary")" data-filtro="1">Con Kilometraje</button>
+            <button type="button" class="btn filter-btn @(filtroActual == 2 ? "btn-primary" : "btn-secondary")" data-filtro="2">Km Ilimitados</button>
+        </div>
+
+        <div id="tablaReservas">
+            @Html.Partial("_ComprobarKilometrajeTable", Model)
+        </div>
+        }
+
+    </div>
+</div>
+
+<!-- Modal de Kilometraje -->
+<div class="modal fade" id="comprobarKmsModal" tabindex="-1" role="dialog" aria-labelledby="comprobarKmsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="comprobarKmsModalLabel">Comprobar Kilometraje</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="comprobarKmsForm" method="post" action="@Url.Action("ComprobarKilometraje", "Vendedores")">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newKilometraje">Nuevo Kilometraje</label>
+                        <input type="number" class="form-control" id="newKilometraje" name="newkilometraje" required />
+                    </div>
+                    <input type="hidden" id="idreserva" name="idreserva" value="@(TempData["IdReservaKm"])" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Mostrar modal de éxito si existe
+            if ($('#successModal').length) {
+                $('#successModal').modal('show');
+            }
+
+            // Mostrar modal de kilometraje si viene del warning
+            $('#confirmButton').on('click', function () {
+                $('#warningModal').modal('hide');
+                $('#comprobarKmsModal').modal('show');
+            });
+
+            // Si existe un ID de reserva en TempData, mostrar el modal
+        @if (TempData["IdReservaKm"] != null)
+        {
+            <text>
+                        $('#comprobarKmsModal').modal('show');
+            </text>
+        }
+
+            // Manejo de filtros con AJAX
+            $('.filter-btn').on('click', function () {
+                var filtro = $(this).attr('data-filtro');
+
+                // Actualizar clases de los botones
+                $('.filter-btn').removeClass('btn-primary').addClass('btn-secondary');
+                $(this).removeClass('btn-secondary').addClass('btn-primary');
+
+                // Realizar la solicitud AJAX para actualizar la tabla de reservas
+                $.ajax({
+                    url: '@Url.Action("ComprobarKilometraje", "Vendedores")',
+                    type: 'GET',
+                    data: { filtro: filtro },
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                    success: function (data) {
+                        $('#tablaReservas').html(data);
+                    },
+                    error: function (error) {
+                        console.error('Error al cargar el filtro:', error);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
