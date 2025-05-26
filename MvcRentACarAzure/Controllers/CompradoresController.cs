@@ -81,6 +81,13 @@ namespace MvcRentACarAzure.Controllers
         public async Task<IActionResult> GetReservasPorCocheComprador(int idcoche)
         {
             List<VistaReserva> reservas = await this.service.GetVistaReservasAsync();
+
+            // Check if reservas is null before trying to operate on it
+            if (reservas == null)
+            {
+                return Json(new List<object>()); // Return an empty array instead of null
+            }
+
             reservas = reservas.Where(r => r.IdCoche == idcoche).ToList();
 
             string color = "#FF5733";

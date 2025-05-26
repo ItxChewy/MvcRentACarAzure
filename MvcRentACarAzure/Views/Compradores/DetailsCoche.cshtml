@@ -12,7 +12,7 @@
         <h1 class="display-4 text-uppercase mb-5">@Model.Marca @Model.Modelo</h1>
         <div class="row align-items-center pb-2">
             <div class="col-lg-6 mb-4">
-                <img class="img-fluid" src="@Model.Imagen">
+                <img class="img-fluid" src="@($"https://bucket-rent-a-car.s3.us-east-1.amazonaws.com/{Model.Imagen}")">
             </div>
             <div class="col-lg-6 mb-4">
                 <h4 class="mb-2">@Model.PrecioKilometros /Dia O @Model.PrecioIlimitado /Dia </h4>

@@ -549,7 +549,7 @@ namespace MvcRentACarAzure.Services
                 Dni = dni,
                 FechaNacimiento = fechanacimiento,
                 Direccion = direccion,
-                PassSpecial = passpecial,
+                PassPecial = passpecial,
                 NombreEmpresa = nombreempresa
             };
             var result = await this.CallApiPostAsync<dynamic>(request, data);

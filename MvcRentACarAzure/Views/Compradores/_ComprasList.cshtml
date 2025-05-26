@@ -7,7 +7,7 @@
     {
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card border shadow-sm h-100">
-                <img class="img-fluid align-self-center mt-2 mb-2" src="@compra.Imagen" alt="@compra.Marca @compra.Modelo" style="width:300px;height:200px">
+                    <img class="img-fluid align-self-center mt-2 mb-2" src="@($"https://bucket-rent-a-car.s3.us-east-1.amazonaws.com/{compra.Imagen}")" alt="@compra.Marca @compra.Modelo" style="width:300px;height:200px">
                 <div class="card-body">
                     <h5 class="card-title">@compra.Marca @compra.Modelo</h5>
                     <p class="card-text">
