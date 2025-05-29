@@ -460,7 +460,7 @@ namespace MvcRentACarAzure.Services
             using (HttpClient client = new HttpClient())
             {
                 string request = "api/auth/login";
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 LoginModel model = new LoginModel
@@ -472,7 +472,7 @@ namespace MvcRentACarAzure.Services
                 StringContent content = new StringContent
                     (json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response =
-                    await client.PostAsync(request, content);
+                    await client.PostAsync(this.Url + request, content);
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content
@@ -501,12 +501,12 @@ namespace MvcRentACarAzure.Services
 
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 client.DefaultRequestHeaders.Add("Authorization", "bearer " + token);
 
-                HttpResponseMessage response = await client.GetAsync(request);
+                HttpResponseMessage response = await client.GetAsync(this.Url + request);
 
                 if (response.IsSuccessStatusCode)
                 {
