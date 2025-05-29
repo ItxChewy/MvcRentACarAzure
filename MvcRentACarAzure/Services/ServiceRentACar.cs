@@ -24,11 +24,10 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response =
-                    await client.GetAsync(request);
+                    await client.GetAsync(this.Url + request);
                 if (response.IsSuccessStatusCode)
                 {
                     T data = await
@@ -45,14 +44,14 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
                 string json = JsonConvert.SerializeObject(obj);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(request, content);
+                HttpResponseMessage response = await client.PostAsync( this.Url + request, content);
                 if (response.IsSuccessStatusCode)
                 {
                     T data = await response.Content.ReadAsAsync<T>();
@@ -69,14 +68,14 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
                 string json = JsonConvert.SerializeObject(obj);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PutAsync(request, content);
+                HttpResponseMessage response = await client.PutAsync(this.Url + request, content);
                 if (response.IsSuccessStatusCode)
                 {
                     T data = await response.Content.ReadAsAsync<T>();
@@ -93,11 +92,11 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
-                HttpResponseMessage response = await client.DeleteAsync(request);
+                HttpResponseMessage response = await client.DeleteAsync(this.Url + request);
                 return response.IsSuccessStatusCode;
             }
         }
@@ -105,7 +104,7 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
@@ -116,7 +115,7 @@ namespace MvcRentACarAzure.Services
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
 
-                HttpResponseMessage response = await client.GetAsync(request);
+                HttpResponseMessage response = await client.GetAsync(this.Url + request);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -134,7 +133,7 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
@@ -148,7 +147,7 @@ namespace MvcRentACarAzure.Services
                 string json = JsonConvert.SerializeObject(obj);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(request, content);
+                HttpResponseMessage response = await client.PostAsync(this.Url + request, content);
                 string responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
@@ -175,7 +174,7 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
@@ -189,7 +188,7 @@ namespace MvcRentACarAzure.Services
                 string json = JsonConvert.SerializeObject(obj);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PutAsync(request, content);
+                HttpResponseMessage response = await client.PutAsync(this.Url + request, content);
                 if (response.IsSuccessStatusCode)
                 {
                     T data = await response.Content.ReadAsAsync<T>();
@@ -206,7 +205,7 @@ namespace MvcRentACarAzure.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
@@ -217,7 +216,7 @@ namespace MvcRentACarAzure.Services
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
 
-                HttpResponseMessage response = await client.DeleteAsync(request);
+                HttpResponseMessage response = await client.DeleteAsync(this.Url + request);
                 return response.IsSuccessStatusCode;
             }
         }
