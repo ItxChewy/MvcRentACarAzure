@@ -297,7 +297,7 @@ namespace MvcRentACarAzure.Services
 
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri(this.Url);
+                //client.BaseAddress = new Uri(this.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
 
@@ -328,7 +328,7 @@ namespace MvcRentACarAzure.Services
                     content.Add(new StringContent(preciokilometros.ToString(CultureInfo.InvariantCulture)), "PrecioKilometros");
                     content.Add(new StringContent(precioilimitado.ToString(CultureInfo.InvariantCulture)), "PrecioIlimitado");
 
-                    HttpResponseMessage response = await client.PostAsync(request, content);
+                    HttpResponseMessage response = await client.PostAsync(this.Url + request, content);
                     if (response.IsSuccessStatusCode)
                     {
                         var result = await response.Content.ReadAsAsync<dynamic>();
